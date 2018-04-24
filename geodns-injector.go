@@ -191,7 +191,9 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 	} else {
 		fmt.Println("GeoIP: [  ] nil")
 	}
+	isIPReplaced := false
 	if country.Country.IsoCode != h.passContry {
+		isIPReplaced = true
 		if ipv4 := h.replaceIP.To4(); ipv4 != nil {
 			edns0Subnet.Family = 1
 			edns0Subnet.SourceNetmask = 24
@@ -235,6 +237,8 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		respEdns0Subnet = new(dns.EDNS0_SUBNET)
 		*respEdns0Subnet = oldEdns0Subnet
 		respOPT.Option = append(respOPT.Option, respEdns0Subnet)
+	} else if isIPReplaced {
+		*respEdns0Subnet = oldEdns0Subnet
 	}
 	if respEdns0Subnet.SourceScope == 0 {
 		respEdns0Subnet.SourceScope = respEdns0Subnet.SourceNetmask
