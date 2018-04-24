@@ -1,0 +1,16 @@
+[Unit]
+Description=GeoDNS Injector
+Documentation=https://github.com/m13253/geodns-injector
+After=network.target
+
+[Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ExecStart=/usr/local/bin/geodns-injector
+LimitNOFILE=1048576
+Restart=always
+RestartSec=3
+Type=simple
+User=nobody
+
+[Install]
+WantedBy=multi-user.target
