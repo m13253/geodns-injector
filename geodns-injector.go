@@ -152,7 +152,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		opt.Hdr.Rrtype = dns.TypeOPT
 		opt.SetUDPSize(dns.DefaultMsgSize)
 		opt.SetDo(false)
-		r.Extra = append(r.Extra, opt)
+		r.Extra = append([]dns.RR{opt}, r.Extra...)
 	}
 	var edns0Subnet *dns.EDNS0_SUBNET
 	for _, option := range opt.Option {
@@ -180,6 +180,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		edns0Subnet.Address = ednsClientAddress
 		opt.Option = append(opt.Option, edns0Subnet)
 	}
+	oldEdns0Subnet := *edns0Subnet
 
 	country, err := h.geoip2DB.Country(ednsClientAddress)
 	if ednsClientAddress != nil {
@@ -212,6 +213,36 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		reply.Rcode = dns.RcodeServerFailure
 		w.WriteMsg(reply)
 		return
+	}
+
+	respOPT := resp.IsEdns0()
+	if respOPT == nil {
+		respOPT = new(dns.OPT)
+		respOPT.Hdr.Name = "."
+		respOPT.Hdr.Rrtype = dns.TypeOPT
+		respOPT.SetUDPSize(dns.DefaultMsgSize)
+		respOPT.SetDo(false)
+		resp.Extra = append([]dns.RR{respOPT}, resp.Extra...)
+	}
+	var respEdns0Subnet *dns.EDNS0_SUBNET
+	for _, option := range respOPT.Option {
+		if option.Option() == dns.EDNS0SUBNET {
+			respEdns0Subnet = option.(*dns.EDNS0_SUBNET)
+			break
+		}
+	}
+	if respEdns0Subnet == nil {
+		respEdns0Subnet = new(dns.EDNS0_SUBNET)
+		*respEdns0Subnet = oldEdns0Subnet
+		respOPT.Option = append(respOPT.Option, respEdns0Subnet)
+	}
+	if respEdns0Subnet.SourceScope == 0 {
+		respEdns0Subnet.SourceScope = respEdns0Subnet.SourceNetmask
+		if respEdns0Subnet.Family == 1 && respEdns0Subnet.SourceScope > 24 {
+			respEdns0Subnet.SourceScope = 24
+		} else if respEdns0Subnet.Family == 2 && respEdns0Subnet.SourceScope > 48 {
+			respEdns0Subnet.SourceScope = 48
+		}
 	}
 
 	err = w.WriteMsg(resp)
