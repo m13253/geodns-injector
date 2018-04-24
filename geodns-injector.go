@@ -54,8 +54,8 @@ type DNSHandler struct {
 }
 
 func main() {
-	listenAddr := flag.String("listen", "[::1]:1253", "Listen address")
-	upstreamAddrStr := flag.String("upstream", "8.8.8.8:53,8.8.4.4:53", "Upstream address")
+	listenAddr := flag.String("listen", "[::1]:16353", "Listen address")
+	upstreamAddrStr := flag.String("upstream", "[::1]:5380", "Upstream addresses, separated with comma if multiple")
 	geoip2DB := flag.String("geoip", "/usr/local/share/GeoIP/GeoLite2-Country.mmdb", "GeoIP2 country database")
 	passCountry := flag.String("country", "CN", "Passthrough country")
 	replaceStr := flag.String("replace", "223.5.5.0", "Replacement IP address")
