@@ -20,6 +20,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+This product includes GeoLite2 data created by MaxMind, available from
+http://www.maxmind.com . The GeoLite2 databases are distributed under the
+Creative Commons Attribution-ShareAlike 4.0 International License.
 */
 
 package main
