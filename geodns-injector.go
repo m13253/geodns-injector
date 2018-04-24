@@ -242,9 +242,9 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 			*respEdns0Subnet = oldEdns0Subnet
 		}
 		if respEdns0Subnet.SourceScope == 0 {
-			if respEdns0Subnet.Family == 1 && respEdns0Subnet.SourceScope > 24 {
+			if respEdns0Subnet.Family == 1 {
 				respEdns0Subnet.SourceScope = 24
-			} else if respEdns0Subnet.Family == 2 && respEdns0Subnet.SourceScope > 48 {
+			} else if respEdns0Subnet.Family == 2 {
 				respEdns0Subnet.SourceScope = 48
 			}
 		}
