@@ -241,7 +241,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		} else if isIPReplaced {
 			*respEdns0Subnet = oldEdns0Subnet
 		}
-		if respEdns0Subnet.SourceScope == 0 {
+		if respEdns0Subnet.SourceNetmask != 0 && respEdns0Subnet.SourceScope == 0 {
 			if respEdns0Subnet.Family == 1 {
 				respEdns0Subnet.SourceScope = 24
 			} else if respEdns0Subnet.Family == 2 {
