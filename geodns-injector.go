@@ -170,7 +170,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 			ednsClientNetmask = 24
 		} else {
 			ednsClientFamily = 2
-			ednsClientNetmask = 48
+			ednsClientNetmask = 56
 		}
 		edns0Subnet = new(dns.EDNS0_SUBNET)
 		edns0Subnet.Code = dns.EDNS0SUBNET
@@ -201,7 +201,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 			edns0Subnet.Address = ipv4
 		} else {
 			edns0Subnet.Family = 2
-			edns0Subnet.SourceNetmask = 48
+			edns0Subnet.SourceNetmask = 56
 			edns0Subnet.SourceScope = 0
 			edns0Subnet.Address = h.replaceIP
 		}
@@ -245,7 +245,7 @@ func (h *DNSHandler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 			if respEdns0Subnet.Family == 1 {
 				respEdns0Subnet.SourceScope = 24
 			} else if respEdns0Subnet.Family == 2 {
-				respEdns0Subnet.SourceScope = 48
+				respEdns0Subnet.SourceScope = 56
 			}
 		}
 	}
@@ -278,7 +278,7 @@ func (h *DNSHandler) doDNSQuery(msg *dns.Msg) (resp *dns.Msg, err error) {
 
 var (
 	ipv4Mask24 = net.IPMask{255, 255, 255, 0}
-	ipv6Mask48 = net.CIDRMask(48, 128)
+	ipv6Mask56 = net.CIDRMask(56, 128)
 )
 
 func (h *DNSHandler) findClientIP(w dns.ResponseWriter, r *dns.Msg) (ednsClientAddress net.IP, ednsClientNetmask uint8) {
@@ -302,8 +302,8 @@ func (h *DNSHandler) findClientIP(w dns.ResponseWriter, r *dns.Msg) (ednsClientA
 			ednsClientAddress = ipv4.Mask(ipv4Mask24)
 			ednsClientNetmask = 24
 		} else {
-			ednsClientAddress = ip.Mask(ipv6Mask48)
-			ednsClientNetmask = 48
+			ednsClientAddress = ip.Mask(ipv6Mask56)
+			ednsClientNetmask = 56
 		}
 	}
 	return
