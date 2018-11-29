@@ -265,7 +265,7 @@ func (h *DNSHandler) doDNSQuery(msg *dns.Msg) (resp *dns.Msg, err error) {
 	numServers := len(h.upstreamAddr)
 	server := h.upstreamAddr[rand.Intn(numServers)]
 	resp, _, err = h.udpClient.Exchange(msg, server)
-	if err == dns.ErrTruncated {
+	if resp != nil && resp.Truncated {
 		log.Println(err)
 		resp, _, err = h.tcpClient.Exchange(msg, server)
 	}
